@@ -44,21 +44,21 @@ app.get('/', (req, res) => {
     res.send("Hello!");
 });
 
-app.get('/users', (req, res) => {
-    const name = req.query.name;
-    if (name != undefined) {
-        let result = findUserByName(name);
-        result = { users_list: result };
-        res.send(result);
-    }
-    else {
-        res.send(users);
-    }
-});
+// app.get('/users', (req, res) => {
+//     const name = req.query.name;
+//     if (name != undefined) {
+//         let result = findUserByName(name);
+//         result = { users_list: result };
+//         res.send(result);
+//     }
+//     else {
+//         res.send(users);
+//     }
+// });
 
-const findUserByName = (name) => {
-    return users['users_list'].filter((user) => user['name'] === name);
-}
+// const findUserByName = (name) => {
+//     return users['users_list'].filter((user) => user['name'] === name);
+// }
 
 app.get('/users/:id', (req, res) => {
     const id = req.params['id']; //or req.params.id
@@ -76,15 +76,41 @@ function findUserById(id) {
     //return users['users_list'].filter( (user) => user['id'] === id);
 }
 
+app.get('/users', (req, res) => {
+    const name = req.query.name;
+    const job = req.query.job;
+    if (name != undefined && job != undefined){
+        let result = findUserByNameAndJob(name, job);
+        result = {users_list: result};
+        res.send(result);
+    }
+    else{
+        res.send(users);
+    }
+});
+
+const findUserByNameAndJob = (name, job) => { 
+    return users['users_list'].filter( (user) => user['name'] === name && user['job'] === job); 
+}
+
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
     addUser(userToAdd);
     res.status(200).end();
 });
 
+
 function addUser(user) {
     users['users_list'].push(user);
 }
+
+app.delete('/users', (req, res) => {
+    const id = req.id;
+    const index = users['users_list'].indexOf(id);
+    users['users_list'].splice(index, 1);
+    res.status(200).end();
+    //removeUser(index);
+})
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
