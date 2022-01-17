@@ -83,38 +83,47 @@ function findUserById(id) {
 app.get('/users', (req, res) => {
     const name = req.query.name;
     const job = req.query.job;
-    if (name != undefined && job != undefined){
+    if (name != undefined && job != undefined) {
         let result = findUserByNameAndJob(name, job);
-        result = {users_list: result};
+        result = { users_list: result };
         res.send(result);
     }
-    else{
+    else {
         res.send(users);
     }
 });
 
-const findUserByNameAndJob = (name, job) => { 
-    return users['users_list'].filter( (user) => user['name'] === name && user['job'] === job); 
+const findUserByNameAndJob = (name, job) => {
+    return users['users_list'].filter((user) => user['name'] === name && user['job'] === job);
 }
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    addUser(userToAdd);
-    res.status(200).end();
+    var user = addUser(userToAdd);
+    res.status(201).send(user).end();
 });
 
 
 function addUser(user) {
+    user.id = guidGenerator();
     users['users_list'].push(user);
+    return user;
 }
 
-app.delete('/users', (req, res) => {
+app.delete('/users/:id', (req, res) => {
     const id = req.id;
     const index = users['users_list'].indexOf(id);
     users['users_list'].splice(index, 1);
-    res.status(200).end();
+    res.status(204).end();
     //removeUser(index);
 })
+
+function guidGenerator() {
+    var S4 = function () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    };
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
