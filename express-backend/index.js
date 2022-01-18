@@ -111,11 +111,16 @@ function addUser(user) {
 }
 
 app.delete('/users/:id', (req, res) => {
-    const id = req.id;
-    const index = users['users_list'].indexOf(id);
-    users['users_list'].splice(index, 1);
-    res.status(204).end();
-    //removeUser(index);
+    const id = req.params['id'];
+    const userToRemove = findUserById(id);
+    if(userToRemove === undefined || userToRemove.length === 0) {
+        res.status(404).send("Resource not found.");
+    }
+    else {
+        const index = users['users_list'].indexOf(userToRemove);
+        users['users_list'].splice(index, 1);
+        res.status(204).send("User Removed.").end();
+    }
 })
 
 function guidGenerator() {

@@ -7,23 +7,24 @@ function MyApp() {
     const [characters, setCharacters] = useState([]);
 
     async function removeOneCharacter(index) {
-        // try {
-        //     const updated = await axios.delete('http://localhost:5000/users/', id).then(
-        //         res => { 
-        //             if (res === 204)
-        //                 setCharacters(updated);
-        //         }
-        //     );
-        //     return updated.data.users_list;
-        // }
-        // catch (error) {
-        //     console.log(error);
-        //     return false;
-        // }
+        var userToRemove = characters[index];
         const updated = characters.filter((character, i) => {
             return i !== index
         });
+
+        deleteFromBackend(userToRemove.id);
         setCharacters(updated);
+    }
+
+    async function deleteFromBackend(id) {
+        try {
+            const response = await axios.delete('http://localhost:5000/users/' + id);
+            return response.data.users_list;
+        }
+        catch (error) {
+            console.log(error);
+            return false;
+        }
     }
 
     function updateList(person) {
